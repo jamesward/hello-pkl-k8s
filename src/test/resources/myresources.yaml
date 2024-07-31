@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx:1.16.1
+        ports:
+        - containerPort: 80
+        name: nginx
+  selector:
+    matchLabels:
+      app: nginx
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: game-config-env-file
+  namespace: default
+data:
+  allowed: 'true'
+  enemies: aliens
+  lives: '3'

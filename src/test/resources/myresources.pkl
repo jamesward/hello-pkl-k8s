@@ -1,0 +1,29 @@
+// https://pkl-lang.org/package-docs/pkg.pkl-lang.org/pkl-k8s/k8s/current/index.html
+// pkl eval --format yaml -o myresources.yaml myresources.pkl
+
+import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.1.0#/K8sResource.pkl"
+import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.1.0#/api/core/v1/ConfigMap.pkl"
+import "EasyDeployment.pkl" as EasyDeployment
+
+resources: Listing<K8sResource> = new {
+  EasyDeployment.create("nginx", "nginx:1.16.1", 80)
+
+  new ConfigMap {
+    metadata {
+      name = "game-config-env-file"
+      namespace = "default"
+    }
+    data {
+      ["allowed"] = "true"
+      ["enemies"] = "aliens"
+      ["lives"] = "3"
+    }
+  }
+}
+
+output {
+  value = resources
+  renderer = (K8sResource.output.renderer as YamlRenderer) {
+    isStream = true
+  }
+}

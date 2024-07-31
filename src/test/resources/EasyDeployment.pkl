@@ -1,0 +1,36 @@
+import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.1.0#/K8sObject.pkl"
+import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.1.0#/api/apps/v1/Deployment.pkl"
+
+function create(deploymentName: String, deploymentImage: String, port: K8sObject.PortNumber) =
+  new Deployment {
+    metadata {
+      name = "\(deploymentName)-deployment"
+    }
+    spec {
+      selector {
+        matchLabels {
+          ["app"] = deploymentName
+        }
+      }
+      template {
+        metadata {
+          labels {
+            ["app"] = deploymentName
+          }
+        }
+        spec {
+          containers {
+            new {
+              name = deploymentName
+              image = deploymentImage
+              ports {
+                new {
+                  containerPort = port
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
